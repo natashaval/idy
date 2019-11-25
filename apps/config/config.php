@@ -9,6 +9,15 @@ return new Config(
         'url' => [
             'baseUrl' => getenv('BASE_URL'),
         ],
+
+        'database' => [
+            'adapter' => getenv('IDEA_DB_ADAPTER'),
+            'host' => getenv('IDEA_DB_HOST'),
+            'username' => getenv('IDEA_DB_USERNAME'),
+            'password' => getenv('IDEA_DB_PASSWORD'),
+            'dbname' => getenv('IDEA_DB_NAME'),
+            'charset' => 'utf8'
+        ], 
         
         'application' => [
             'libraryDir' => APP_PATH . "/lib/",

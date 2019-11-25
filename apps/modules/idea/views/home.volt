@@ -98,6 +98,14 @@
 {% block content %}
 
     <ul>
+        {% for idea in ideas %}
+            <li>
+                <h2>#{{ idea.id }} {{ idea.title }}</h2>
+                <p>{{ idea.description }}</p>
+                <div class="author">By {{idea.authorName}}</div>
+                <div class="email">{{idea.authorEmail}}</div>
+            </li>
+        {% endfor %}
         <li>
             <div class="sticky">
                 <h2>Idea Title #1</h2>
