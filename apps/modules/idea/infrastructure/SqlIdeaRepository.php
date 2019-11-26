@@ -2,41 +2,118 @@
 
 namespace Idy\Idea\Infrastructure;
 
+use Phalcon\DiInterface;
+
 use Idy\Idea\Domain\Model\IdeaRepository;
+use Idy\Idea\Domain\Model\Author;
 use Idy\Idea\Domain\Model\Idea;
 use Idy\Idea\Domain\Model\IdeaId;
 
-class SqlIdeaRepository extends BaseRepository implements IdeaRepository
+class SqlIdeaRepository implements IdeaRepository
 {
-    private $ideas;
-    private $conn;
+    protected $di;
 
-    public function __construct()
+    public function __construct(DiInterface $di) 
     {
-        $this->ideas = array();
-        // $conn = $this->getConnection();
+        $this->di = $di;
     }
 
-    public function byId(IdeaId $id)
+    public function byId(IdeaId $id) : ?Idea
     {
-        $idea = $conn->fetchOne("SELECT * FROM idea where id = :id",
-        \Phalcon\Db::FETCH_ASSOC,
-        [ "id" => $id],
-        [ "id" => Column::BIND_PARAM_INT]
-        );
-        return $idea;
+        $db = $this->di->getShared('db');
+
+        $sql = "SELECT id, title, description, 
+                        author_name, author_email,
+                        rating, vote
+                FROM idea 
+                WHERE id = :id";
+
+        $result = $db->fetchOne($sql, \Phalcon\Db::FETCH_ASSOC, [ 
+            'id' => $id->id()
+        ]);
+
+        if ($result) {
+
+            $author = new Author(
+                $result['author_name'],
+                $result['author_email']
+            );
+
+            $idea = new Idea(
+                new IdeaId($result['id']),
+                $result['title'],
+                $result['description'],
+                $author,
+                $result['rating'],
+                $result['vote']
+            );
+
+            return $idea;
+        }
+
+        return null;
+    }
+
+    public function all() : ?array
+    {
+        $db = $this->di->getShared('db');
+
+        $sql = "SELECT id, title, description, 
+                        author_name, author_email,
+                        rating, vote
+                FROM idea";
+
+        $result = $db->fetchAll($sql, \Phalcon\Db::FETCH_ASSOC);
+
+        if ($result) {
+
+            $resultArray = array();
+
+            foreach($result as $row) {
+                $author = new Author(
+                    $row['author_name'],
+                    $row['author_email']
+                );
+    
+                $idea = new Idea(
+                    new IdeaId($row['id']),
+                    $row['title'],
+                    $row['description'],
+                    $author,
+                    $row['rating'],
+                    $row['vote']
+                );
+
+                array_push($resultArray, $idea);
+            }
+
+            return $resultArray;
+        }
+
+        return null;
     }
 
     public function save(Idea $idea)
     {
+        $db = $this->di->getShared('db');
 
-    }
+        $sql = "INSERT INTO idea(
+                    id, title, description, author_name, 
+                    author_email, rating, vote
+                ) VALUES(
+                    :id, :title, :description, :author_name, 
+                    :author_email, :rating, :vote
+                )";
 
-    public function allIdeas()
-    {
-        $conn = $this->getConnection();
-        $ideas = $conn->fetchAll("SELECT * FROM idea");
-        return $ideas;
+        $result = $db->query($sql, [
+            'id' => $idea->id()->id(),
+            'title' => $idea->title(),
+            'description' => $idea->description(),
+            'author_name' => $idea->author()->name(), 
+            'author_email' => $idea->author()->email(), 
+            'rating' => $idea->averageRating(), 
+            'vote' => $idea->totalVotes()
+        ]);
     }
     
 }
