@@ -1,8 +1,8 @@
 <?php
 
-namespace Idy\Idea\Domain\Model;
+namespace Idy\Idea\Application;
 
-class UserHasRatedException extends \Exception
+class IdeaNotFoundException extends \Exception
 {
     public function __construct($message, $code = 0, Exception $previous = null) {
         parent::__construct($message, $code, $previous);

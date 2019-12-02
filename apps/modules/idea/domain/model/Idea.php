@@ -2,6 +2,8 @@
 
 namespace Idy\Idea\Domain\Model;
 
+use Idy\Common\Events\DomainEventPublisher;
+
 class Idea
 {
     private $id;
@@ -10,6 +12,7 @@ class Idea
     private $author;
     private $averageRating;
     private $totalVotes;
+    private $ratings;
 
     public function id() 
     {
@@ -43,7 +46,8 @@ class Idea
 
     public function __construct(
         IdeaId $id, $title, $description, 
-        Author $author, $averageRating, $totalVotes)
+        Author $author, $averageRating = 0, 
+        $totalVotes = 0)
     {
         $this->id = $id;
         $this->title = $title;
@@ -51,32 +55,37 @@ class Idea
         $this->author = $author;
         $this->averageRating = $averageRating;
         $this->totalVotes = $totalVotes;
+        $this->ratings = array();
     }
 
-    public function addRating($raterEmail, RatingValue $ratingValue)
+    public function addRating(RatingId $id, $raterEmail, RatingValue $ratingValue)
     {
-        $newRating = new Rating(new RatingId(), $raterEmail, $ratingValue);
+        $newRating = new Rating($id, $raterEmail, $ratingValue, $this->id);
 
-        if ($newRating->isValid()) {
-            $exist = false;
-            foreach ($this->ratings as $existingRating) {
-                if ($existingRating->equals($newRating)) {
-                    $exist = true;
-                }
+        $exist = false;
+        foreach ($this->ratings as $existingRating) {
+            if ($existingRating->equals($newRating)) {
+                $exist = true;
             }
-
-            if (!$exist) {
-                array_push($this->ratings, $newRating);
-            } else {
-                throw new Exception('Author ' . $newRating->author() . ' has given a rating.');
-            }
-
-            DomainEventPublisher::instance()->publish(
-                new IdeaRated($this->author->name(), $this->author->email(), 
-                    $this->title, $ratingValue)
-            );
-
         }
+
+        if (!$exist) {
+            array_push($this->ratings, $newRating);
+
+            $totalRating = 0;
+            foreach ($this->ratings as $rating) {
+                $totalRating = $totalRating + $rating->value()->value();
+            }
+
+            $this->averageRating = $totalRating / \count($this->ratings);
+
+        } else {
+            throw new UserHasRatedException('Author ' . $newRating->author() . ' has given a rating.');
+        }
+
+        DomainEventPublisher::instance()->publish(
+            new IdeaRated($this, $raterEmail)
+        );
     }
 
     public function vote()
@@ -88,7 +97,7 @@ class Idea
     {
         $author = new Author($authorName, $authorEmail);
         
-        $newIdea = new Idea(new IdeaId(), $title, $description, $author, 0, 0);
+        $newIdea = new Idea(new IdeaId(), $title, $description, $author);
         
         return $newIdea;
     }
