@@ -35,7 +35,7 @@
 
         <div class="collapse navbar-collapse" id="navbarsExampleDefault">
             <div class="form-inline ml-auto my-2 my-lg-0">
-                <a href="{{ url('idea/idea/add')}}" class="btn btn-secondary my-2 my-sm-0">Add new</a>
+                <a href="{{ url('idy/idea/idea/add')}}" class="btn btn-secondary my-2 my-sm-0">Add new</a>
             </div>
         </div>
     </nav>

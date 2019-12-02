@@ -15,7 +15,7 @@
     </div>
 </div>
 <br>
-<form method="post" action="{{ url('idea/idea/add') }}">
+<form method="post" action="{{ url('idy/idea/idea/add') }}">
 
     <div class="form-group">
         <label for="input-title">Title</label>

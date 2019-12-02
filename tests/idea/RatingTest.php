@@ -13,34 +13,11 @@ class RatingTest extends TestCase
     {
         $rating = new Rating(
             new RatingId(),
-            'rizky@if.its.ac.id',
+            "bebek@bebek.com",
             new RatingValue(4),
-            new IdeaId()
+            new IdeaId(1)
         );
 
-        $this->assertInstanceOf(Rating::class, $rating);
+        $this->assertInstanceOf(Rating::class, null);
     }
-
-    public function testCanBeCompared() : void
-    {
-        $ideaId = new IdeaId();
-
-        $rating1 = new Rating(
-            new RatingId(),
-            'rizky@if.its.ac.id',
-            new RatingValue(4),
-            $ideaId
-        );
-
-        $rating2 = new Rating(
-            new RatingId(),
-            'rizky@if.its.ac.id',
-            new RatingValue(5),
-            $ideaId
-        );
-
-        $this->assertTrue($rating1->equals($rating2));
-    }
-
-    
 }

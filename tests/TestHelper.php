@@ -19,11 +19,9 @@ include __DIR__ . "/../vendor/autoload.php";
 $loader = new Loader();
 
 $loader->registerNamespaces([
-
     'Idy\Idea\Domain\Model' => APP_PATH . '/modules/idea/domain/model',
     'Idy\Idea\Application' => APP_PATH . '/modules/idea/application',
     'Idy\Idea\Infrastructure' => APP_PATH . '/modules/idea/infrastructure',
-
 ]);
 
 $loader->register();

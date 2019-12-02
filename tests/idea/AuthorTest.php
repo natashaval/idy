@@ -1,6 +1,8 @@
 <?php
 declare(strict_types=1);
 
+require './tests/TestHelper.php';
+
 use \PHPUnit\Framework\TestCase;
 use \Idy\Idea\Domain\Model\Author;
 

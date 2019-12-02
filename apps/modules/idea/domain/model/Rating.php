@@ -35,11 +35,11 @@ class Rating
 
     public function equals(Rating $rating)
     {
-        if ($this->email == $rating->email && 
-            $this->ideaId->equals($rating->ideaId)) 
-        {
-            return true;
-        } 
+        if ($this->email == $rating->email &&
+            $this->ideaId->equals($rating->ideaId))
+            {
+                return true;
+            }
         return false;
     }
 

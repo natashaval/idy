@@ -37,20 +37,6 @@ $di['url'] = function() use ($config, $di) {
 	return $url;
 };
 
-$di->setShared('database', function() use ($config) {
-    $class = 'Phalcon\Db\Adapter\Pdo\\' . $config->database->adapter;
-    $params = [
-        'host'     => $config->database->host,
-        'username' => $config->database->username,
-        'password' => $config->database->password,
-        'dbname'   => $config->database->dbname,
-        'charset'  => $config->database->charset
-    ];
-
-    $connection = new $class($params);
-    return $connection;
-});
-
 $di['voltService'] = function($view, $di) use ($config) {
     $volt = new \Phalcon\Mvc\View\Engine\Volt($view, $di);
     if (!is_dir($config->application->cacheDir)) {

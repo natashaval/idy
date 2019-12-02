@@ -12,19 +12,14 @@ use Idy\Idea\Application\ViewAllIdeasService;
 
 class IdeaController extends Controller
 {
-
-    private $authorRepository;
     private $ideaRepository;
-    private $db;
 
     public function initialize() {
-        $this->authorRepository = new SqlAuthorRepository();
-        $this->ideaRepository = new SqlIdeaRepository();
-        $this->db = $di['database'];
+        // $ideaRepository = $this->di->getShared('sql_idea_repository');
     }
 
     public function checkAction() {
-        echo $this->db->getConnection() ? 'connected!' : 'db offline';
+        echo $this->ideaRepository ? 'connected!' : 'db offline';
     }
 
     public function indexAction()
@@ -63,7 +58,7 @@ class IdeaController extends Controller
             $service = new CreateNewIdeaService($ideaRepository);
             $service->execute($request);
 
-            $this->flashSession->success("<h4 class=\"alert-heading\">Your idea has been posted!</h4><a href=\"" . $this->url->get('') . "\">Back to see your awesome ideas</a>.");
+            $this->flashSession->success("<h4 class=\"alert-heading\">Your idea has been posted!</h4><a href=\"" . $this->url->get('') . "idy\">Back to see your awesome ideas</a>.");
 
             $this->view->setVar('title', $title);
             $this->view->setVar('description', $description);
